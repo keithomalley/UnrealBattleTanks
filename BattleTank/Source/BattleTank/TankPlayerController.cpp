@@ -2,7 +2,6 @@
 
 #include "TankPlayerController.h"
 
-
 void ATankPlayerController::BeginPlay() {
 	Super::BeginPlay();
 
@@ -12,11 +11,63 @@ void ATankPlayerController::BeginPlay() {
 	} else {
 		UE_LOG(LogTemp, Warning, TEXT("PlayerController has tank: %s"), *(ControlledTank->GetName()) );
 	}
+}
+
+void ATankPlayerController::Tick(float DeltaTime) {
+	Super::Tick(DeltaTime);
+	AimTowardsCrosshair();
+}
+
+void ATankPlayerController::AimTowardsCrosshair() {
+	if (!GetControlledTank()) { return; }
+
+	FVector HitLocation;
+
+	if (GetSightRayHitLocation(HitLocation)) {
+		UE_LOG(LogTemp, Warning, TEXT("HitLocation: %s"), *HitLocation.ToString());
+
+
+	}
+	
+
+
 
 }
 
+
 ATank* ATankPlayerController::GetControlledTank() const {
 	return Cast<ATank>(GetPawn());
+}
+
+bool ATankPlayerController::GetSightRayHitLocation(FVector& HitLocation) const {
+
+	/* Find crosshair position in pixel coordinates */
+	int32 ViewportSizeX, ViewPortSizeY;
+	GetViewportSize(ViewportSizeX, ViewPortSizeY);
+	auto ScreenLocation = FVector2D(ViewportSizeX * CrosshairXLocation, ViewPortSizeY * CrosshairYLocation);
+	
+	FVector LookDirection;
+	if (GetLookDirection(ScreenLocation, LookDirection)) {
+
+	}
+
+
+	return false;
+}
+
+
+
+/* Deproject screen position to world direction */
+bool ATankPlayerController::GetLookDirection(FVector2D ScreenLocation, FVector& LookDirection) const {
+	// will be discarded
+	FVector WorldLocation;
+
+	return DeprojectScreenPositionToWorld(
+		ScreenLocation.X, 
+		ScreenLocation.Y, 
+		WorldLocation, 
+		LookDirection
+	);	
 }
 
 
