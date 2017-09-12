@@ -2,9 +2,13 @@
 
 #include "TankBarrel.h"
 
+void UTankBarrel::Elevate(float RelativeSpeed) {
 
+  RelativeSpeed = FMath::Clamp<float>(RelativeSpeed, -1, +1);
 
+	auto ElevationChange = RelativeSpeed * MaxDegreesPerSecond * GetWorld()->DeltaTimeSeconds;
+	auto RawElevation = RelativeRotation.Pitch + ElevationChange;
+	auto NewElevation = FMath::Clamp<float>(RawElevation, MinDegreesElevation, MaxDegreesElevation);
 
-void UTankBarrel::Elevate(float DegreesPerSecond) {
-
+	SetRelativeRotation( FRotator(NewElevation, 0, 0) );
 }
